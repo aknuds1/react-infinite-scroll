@@ -1,6 +1,7 @@
+var isBrowser = typeof window !== 'undefined';
 var React = require('react');
 var ReactDOM = require('react-dom');
-let imagesLoaded = require('imagesloaded')
+var imagesLoaded = isBrowser ? require('imagesloaded') : null
 
 function topPosition(domElt) {
   if (!domElt) {
@@ -54,6 +55,10 @@ module.exports = function () {
       }
     },
     attachScrollListener: function () {
+      if (isBrowser) {
+        return
+      }
+
       console.log(`Attaching scroll event listener`)
       if (!this.props.hasMore) {
         return;
