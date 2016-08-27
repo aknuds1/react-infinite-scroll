@@ -64,8 +64,6 @@ module.exports = function () {
         return;
       }
 
-      var imageLoad = imagesLoaded(ReactDOM.findDOMNode(this))
-
       function handleImagesLoaded() {
         console.log('All images are loaded, listening to events')
         global.addEventListener('scroll', this.scrollListener)
@@ -75,6 +73,9 @@ module.exports = function () {
         imageLoad.off('always', handleImagesLoaded)
       }
 
+      // Wait for images to be loaded before listening to events, so that elements are properly
+      // positioned first
+      var imageLoad = imagesLoaded(ReactDOM.findDOMNode(this))
       imageLoad.on('always', handleImagesLoaded.bind(this))
     },
     detachScrollListener: function () {
