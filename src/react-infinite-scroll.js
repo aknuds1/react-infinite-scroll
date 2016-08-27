@@ -1,3 +1,7 @@
+var isBrowser = typeof window !== 'undefined';
+var React = require('react');
+var ReactDOM = require('react-dom');
+
 function topPosition(domElt) {
   if (!domElt) {
     return 0;
@@ -5,7 +9,7 @@ function topPosition(domElt) {
   return domElt.offsetTop + topPosition(domElt.offsetParent);
 }
 
-module.exports = function (React) {
+module.exports = function () {
   if (React.addons && React.addons.InfiniteScroll) {
     return React.addons.InfiniteScroll;
   }
@@ -31,9 +35,11 @@ module.exports = function (React) {
       return React.DOM.div(null, props.children, props.hasMore && props.loader);
     },
     scrollListener: function () {
-      var el = this.getDOMNode();
-      var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-      if (topPosition(el) + el.offsetHeight - scrollTop - window.innerHeight < Number(this.props.threshold)) {
+      var el = ReactDOM.findDOMNode(this);
+      var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset :
+        (document.documentElement || document.body.parentNode || document.body).scrollTop;
+      var delta = topPosition(el) + el.offsetHeight - scrollTop - window.innerHeight;
+      if (delta < Number(this.props.threshold)) {
         this.detachScrollListener();
         // call loadMore after detachScrollListener to allow
         // for non-async loadMore functions
@@ -41,16 +47,21 @@ module.exports = function (React) {
       }
     },
     attachScrollListener: function () {
-      if (!this.props.hasMore) {
-        return;
+      if (isBrowser) {
+        if (!this.props.hasMore) {
+          return;
+        }
+
+        window.addEventListener('scroll', this.scrollListener);
+        window.addEventListener('resize', this.scrollListener);
+        this.scrollListener();
       }
-      window.addEventListener('scroll', this.scrollListener);
-      window.addEventListener('resize', this.scrollListener);
-      this.scrollListener();
     },
     detachScrollListener: function () {
-      window.removeEventListener('scroll', this.scrollListener);
-      window.removeEventListener('resize', this.scrollListener);
+      if (isBrowser) {
+        window.removeEventListener('scroll', this.scrollListener);
+        window.removeEventListener('resize', this.scrollListener);
+      }
     },
     componentWillUnmount: function () {
       this.detachScrollListener();
