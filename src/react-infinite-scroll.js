@@ -1,7 +1,6 @@
 var isBrowser = typeof window !== 'undefined';
 var React = require('react');
 var ReactDOM = require('react-dom');
-var imagesLoaded = isBrowser ? require('imagesloaded') : null
 
 function topPosition(domElt) {
   if (!domElt) {
@@ -55,28 +54,17 @@ module.exports = function () {
       }
     },
     attachScrollListener: function () {
-      if (isBrowser) {
-        return
+      if (!isBrowser) {
+        return;
       }
 
-      console.log(`Attaching scroll event listener`)
       if (!this.props.hasMore) {
         return;
       }
 
-      function handleImagesLoaded() {
-        console.log('All images are loaded, listening to events')
-        global.addEventListener('scroll', this.scrollListener)
-        global.addEventListener('resize', this.scrollListener)
-        this.scrollListener();
-
-        imageLoad.off('always', handleImagesLoaded)
-      }
-
-      // Wait for images to be loaded before listening to events, so that elements are properly
-      // positioned first
-      var imageLoad = imagesLoaded(ReactDOM.findDOMNode(this))
-      imageLoad.on('always', handleImagesLoaded.bind(this))
+      global.addEventListener('scroll', this.scrollListener);
+      global.addEventListener('resize', this.scrollListener);
+      this.scrollListener();
     },
     detachScrollListener: function () {
       console.log('event detaching scroll listener')
