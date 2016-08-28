@@ -29,7 +29,6 @@ module.exports = function () {
       this.scrollListener();
     },
     componentDidUpdate: function () {
-      console.log(`Reattaching scroll listener because component updated itself`)
       this.attachScrollListener();
     },
     render: function () {
@@ -37,20 +36,16 @@ module.exports = function () {
       return React.DOM.div(null, props.children, props.hasMore && props.loader);
     },
     scrollListener: function () {
-      console.log(`Handling scroll event`, this)
       var el = ReactDOM.findDOMNode(this);
       var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset :
         (document.documentElement || document.body.parentNode || document.body).scrollTop;
       var delta = topPosition(el) + el.offsetHeight - scrollTop - window.innerHeight;
       if (delta < Number(this.props.threshold)) {
-        console.log(`event, Scroll delta is less than threshold: ${delta}, loading more`)
         this.detachScrollListener();
         // call loadMore after detachScrollListener to allow
         // for non-async loadMore functions
         this.props.loadMore(this.props.pageStart);
         this.props.pageStart += 1;
-      } else {
-        console.log(`event, Scroll delta is larger than or equal to threshold: ${delta}`)
       }
     },
     attachScrollListener: function () {
@@ -67,7 +62,6 @@ module.exports = function () {
       this.scrollListener();
     },
     detachScrollListener: function () {
-      console.log('event detaching scroll listener')
       global.removeEventListener('scroll', this.scrollListener);
       global.removeEventListener('resize', this.scrollListener);
     },
