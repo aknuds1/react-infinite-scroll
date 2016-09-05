@@ -26,7 +26,6 @@ module.exports = function () {
     },
     componentDidMount: function () {
       this.attachScrollListener();
-      this.scrollListener();
     },
     componentDidUpdate: function () {
       this.attachScrollListener();
