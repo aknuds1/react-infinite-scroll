@@ -44,26 +44,25 @@ module.exports = function () {
         this.detachScrollListener();
         // call loadMore after detachScrollListener to allow
         // for non-async loadMore functions
-        this.props.loadMore(this.props.pageStart);
-        this.props.pageStart += 1;
+        this.props.loadMore(this.props.pageStart += 1);
       }
     },
     attachScrollListener: function () {
-      if (!isBrowser) {
-        return;
-      }
+      if (isBrowser) {
+        if (!this.props.hasMore) {
+          return;
+        }
 
-      if (!this.props.hasMore) {
-        return;
+        window.addEventListener('scroll', this.scrollListener);
+        window.addEventListener('resize', this.scrollListener);
+        this.scrollListener();
       }
-
-      global.addEventListener('scroll', this.scrollListener);
-      global.addEventListener('resize', this.scrollListener);
-      this.scrollListener();
     },
     detachScrollListener: function () {
-      global.removeEventListener('scroll', this.scrollListener);
-      global.removeEventListener('resize', this.scrollListener);
+      if (isBrowser) {
+        window.removeEventListener('scroll', this.scrollListener);
+        window.removeEventListener('resize', this.scrollListener);
+      }
     },
     componentWillUnmount: function () {
       this.detachScrollListener();
