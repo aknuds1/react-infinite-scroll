@@ -44,7 +44,8 @@ module.exports = function () {
         this.detachScrollListener();
         // call loadMore after detachScrollListener to allow
         // for non-async loadMore functions
-        this.props.loadMore(this.props.pageStart += 1);
+        this.props.loadMore(this.props.pageStart);
+        this.props.pageStart += 1;
       }
     },
     attachScrollListener: function () {
